@@ -1,6 +1,5 @@
 package com.luu9798.postandcomments.database.`object`
 
-import android.provider.ContactsContract.CommonDataKinds.Email
 import io.realm.RealmObject
 import io.realm.annotations.PrimaryKey
 
