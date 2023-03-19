@@ -1,6 +1,7 @@
 package com.luu9798.postandcomments.model.user
 
 import com.luu9798.postandcomments.database.`object`.UserRealm
+import com.luu9798.postandcomments.model.card.UserCard
 
 
 data class User(
@@ -23,6 +24,17 @@ data class User(
             phone = phone,
             website = website,
             company = company.toRealm()
+        )
+    }
+
+    fun toUserCard(): UserCard {
+        return UserCard(
+            id = id,
+            name = name,
+            username = username,
+            email = email,
+            phone = phone,
+            website = website,
         )
     }
 }

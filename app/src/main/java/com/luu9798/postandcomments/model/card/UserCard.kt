@@ -7,4 +7,5 @@ data class UserCard(
     val email: String = "",
     val phone: String = "",
     val website: String = "",
+    val posts: ArrayList<PostCard> = arrayListOf()
 )

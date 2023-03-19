@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.luu9798.postandcomments.databinding.ViewHolderUserBinding
 import com.luu9798.postandcomments.model.card.UserCard
 
-class UserCardAdapter(private val cardList: List<UserCard>): RecyclerView.Adapter<UserCardAdapter.ViewHolder>() {
+class UserCardAdapter(private val cardList: ArrayList<UserCard>): RecyclerView.Adapter<UserCardAdapter.ViewHolder>() {
 
     class ViewHolder(private val binding: ViewHolderUserBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(userCard: UserCard) {
@@ -20,9 +20,11 @@ class UserCardAdapter(private val cardList: List<UserCard>): RecyclerView.Adapte
                 dropDownArrow.setOnClickListener {
                     if (userInfo.visibility == View.VISIBLE) {
                         userInfo.visibility = View.GONE
+                        dividerUserInfo.visibility = View.GONE
                         dropDownArrow.animate().rotation(0f).start()
                     } else {
                         userInfo.visibility = View.VISIBLE
+                        dividerUserInfo.visibility = View.VISIBLE
                         dropDownArrow.animate().rotation(180f).start()
                     }
                 }
@@ -40,4 +42,8 @@ class UserCardAdapter(private val cardList: List<UserCard>): RecyclerView.Adapte
     }
 
     override fun getItemCount(): Int = cardList.size
+
+    fun addAll(newCardList: List<UserCard>) {
+        cardList.addAll(newCardList)
+    }
 }
