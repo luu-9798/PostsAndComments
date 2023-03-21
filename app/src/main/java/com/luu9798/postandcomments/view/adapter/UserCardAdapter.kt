@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.luu9798.postandcomments.databinding.ViewHolderUserBinding
 import com.luu9798.postandcomments.model.card.UserCard
+import com.luu9798.postandcomments.view.custom.PostView
 
 class UserCardAdapter(private val cardList: ArrayList<UserCard>): RecyclerView.Adapter<UserCardAdapter.ViewHolder>() {
 
@@ -21,12 +22,18 @@ class UserCardAdapter(private val cardList: ArrayList<UserCard>): RecyclerView.A
                     if (userInfo.visibility == View.VISIBLE) {
                         userInfo.visibility = View.GONE
                         dividerUserInfo.visibility = View.GONE
-                        dropDownArrow.animate().rotation(0f).start()
+                        dropDownArrow.toggleArrow()
                     } else {
                         userInfo.visibility = View.VISIBLE
                         dividerUserInfo.visibility = View.VISIBLE
-                        dropDownArrow.animate().rotation(180f).start()
+                        dropDownArrow.toggleArrow()
                     }
+                }
+
+                for (post in userCard.posts) {
+                    val postView = PostView(this.root.context)
+                    postView.setPostCard(post)
+                    linearLayoutPost.addView(postView)
                 }
             }
         }

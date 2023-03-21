@@ -9,8 +9,8 @@ open class UserRealm(
     var name: String = "",
     var username: String = "",
     var email: String = "",
-    var address: AddressRealm? = AddressRealm(),
+    var address: String = "",
     var phone: String = "",
     var website: String = "",
-    var company: CompanyRealm? = CompanyRealm()
+    var company: String = ""
 ) : RealmObject()

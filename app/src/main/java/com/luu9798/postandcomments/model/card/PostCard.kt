@@ -4,5 +4,5 @@ data class PostCard (
     val id: Int,
     val title: String,
     val body: String,
-    val comments: ArrayList<CommentCard> = arrayListOf()
+    var comments: List<CommentCard> = listOf()
 )

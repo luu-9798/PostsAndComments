@@ -16,7 +16,7 @@ class ArrowImageView(context: Context, attrs: AttributeSet?): AppCompatImageView
         setOnClickListener { toggleArrow() }
     }
 
-    private fun toggleArrow() {
+    fun toggleArrow() {
         isUp = !isUp
         if (animator != null) {
             animator?.cancel()

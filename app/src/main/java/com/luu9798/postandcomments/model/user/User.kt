@@ -1,7 +1,9 @@
 package com.luu9798.postandcomments.model.user
 
+import com.google.gson.Gson
 import com.luu9798.postandcomments.database.`object`.UserRealm
 import com.luu9798.postandcomments.model.card.UserCard
+import com.luu9798.postandcomments.model.other.Post
 
 
 data class User(
@@ -15,15 +17,16 @@ data class User(
     val company: Company
 ) {
     fun toRealm(): UserRealm {
+        val gson = Gson()
         return UserRealm(
             id = id,
             name = name,
             username = username,
             email = email,
-            address = address.toRealm(),
+            address = gson.toJson(address),
             phone = phone,
             website = website,
-            company = company.toRealm()
+            company = gson.toJson(company)
         )
     }
 
@@ -34,7 +37,7 @@ data class User(
             username = username,
             email = email,
             phone = phone,
-            website = website,
+            website = website
         )
     }
 }
