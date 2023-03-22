@@ -4,4 +4,11 @@
     <string name="info">Info</string>
     <string name="tooltip_info">Users: %1$d\nPosts: %2$d\nComments: %3$d</string>
     <string name="error_fetching_data">Error fetching data. Please try again later.</string>
+    <string name="title">Title: %s</string>
+    <string name="name">Name: %s</string>
+    <string name="username">Username: %s</string>
+    <string name="phone">Phone: %s</string>
+    <string name="website">Website: %s</string>
+    <string name="email">Email: %s</string>
+    <string name="name_placeholder">Name placeholder</string>
 </resources>

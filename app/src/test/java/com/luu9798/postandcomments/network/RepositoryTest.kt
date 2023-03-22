@@ -9,7 +9,6 @@ import org.junit.runner.RunWith
 import org.mockito.Mock
 import org.mockito.junit.MockitoJUnitRunner
 import retrofit2.Retrofit
-import kotlinx.coroutines.test.runBlockingTest
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.mockito.Mockito.`when`

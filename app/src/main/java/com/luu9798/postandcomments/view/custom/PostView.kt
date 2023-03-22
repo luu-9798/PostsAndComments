@@ -7,6 +7,7 @@ import android.view.View
 import androidx.annotation.Nullable
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
+import com.luu9798.postandcomments.R
 import com.luu9798.postandcomments.databinding.ViewPostBinding
 import com.luu9798.postandcomments.model.card.PostCard
 
@@ -29,7 +30,7 @@ class PostView @JvmOverloads constructor(
     }
 
     fun setPostCard(postCard: PostCard) {
-        binding.textViewPostTitle.text = postCard.title
+        binding.textViewPostTitle.text = resources.getString(R.string.title, postCard.title)
         binding.textViewPostBody.text = postCard.body
         for (comment in postCard.comments) {
             val commentView = CommentView(this.context)

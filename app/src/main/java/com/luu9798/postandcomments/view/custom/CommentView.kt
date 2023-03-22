@@ -5,6 +5,7 @@ import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.widget.LinearLayout
 import androidx.annotation.Nullable
+import com.luu9798.postandcomments.R
 import com.luu9798.postandcomments.databinding.ViewCommentBinding
 import com.luu9798.postandcomments.model.card.CommentCard
 
@@ -16,7 +17,7 @@ class CommentView @JvmOverloads constructor(
         ViewCommentBinding.inflate(LayoutInflater.from(context), this, true)
 
     fun setCommentCard(commentCard: CommentCard) {
-        binding.nameTextView.text = commentCard.name
+        binding.nameTextView.text = resources.getString(R.string.name, commentCard.name)
         binding.bodyTextView.text = commentCard.body
         // Set other views as needed, e.g., for comments
     }

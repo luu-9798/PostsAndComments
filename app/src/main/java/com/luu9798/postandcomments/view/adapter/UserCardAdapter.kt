@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.luu9798.postandcomments.R
 import com.luu9798.postandcomments.databinding.ViewHolderUserBinding
 import com.luu9798.postandcomments.model.card.UserCard
 import com.luu9798.postandcomments.view.custom.PostView
@@ -13,10 +14,11 @@ class UserCardAdapter(private val cardList: ArrayList<UserCard>): RecyclerView.A
     class ViewHolder(private val binding: ViewHolderUserBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(userCard: UserCard) {
             binding.apply {
-                userName.text = userCard.name
-                userEmail.text = userCard.email
-                userPhone.text = userCard.phone
-                userWebsite.text = userCard.website
+                nameTextView.text = userCard.name
+                emailTextView.text = root.resources.getString(R.string.email, userCard.email)
+                phoneTextView.text = root.resources.getString(R.string.phone, userCard.phone)
+                websiteTextView.text = root.resources.getString(R.string.website, userCard.website)
+                usernameTextView.text = root.resources.getString(R.string.username, userCard.username)
 
                 dropDownArrow.setOnClickListener {
                     if (userInfo.visibility == View.VISIBLE) {

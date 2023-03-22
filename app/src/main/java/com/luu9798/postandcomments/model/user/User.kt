@@ -3,8 +3,6 @@ package com.luu9798.postandcomments.model.user
 import com.google.gson.Gson
 import com.luu9798.postandcomments.database.`object`.UserRealm
 import com.luu9798.postandcomments.model.card.UserCard
-import com.luu9798.postandcomments.model.other.Post
-
 
 data class User(
     val id: Int,
