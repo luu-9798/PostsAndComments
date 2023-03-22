@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">Post and Comments</string>
     <string name="app_label">Trung\'s Rethink Interview</string>
+    <string name="info">Info</string>
+    <string name="tooltip_info">Users: %1$d\nPosts: %2$d\nComments: %3$d</string>
+    <string name="error_fetching_data">Error fetching data. Please try again later.</string>
 </resources>

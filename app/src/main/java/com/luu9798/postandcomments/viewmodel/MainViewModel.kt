@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.luu9798.postandcomments.database.RealmManager
 import com.luu9798.postandcomments.database.`object`.CommentRealm
 import com.luu9798.postandcomments.database.`object`.PostRealm
 import com.luu9798.postandcomments.database.`object`.UserRealm
@@ -13,7 +14,6 @@ import com.luu9798.postandcomments.model.other.Post
 import com.luu9798.postandcomments.model.user.User
 import com.luu9798.postandcomments.network.Repository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import io.realm.Realm
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
@@ -22,14 +22,43 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    private val realm: Realm,
+    private val realmManager: RealmManager,
     private val repository: Repository
 ) : ViewModel() {
 
     private val _cards = MutableLiveData<List<UserCard>>()
     val cards: LiveData<List<UserCard>> = _cards
 
-    fun fetchDataAndMapCards() {
+    private val _fetchError = MutableLiveData(false)
+    val fetchError: LiveData<Boolean> = _fetchError
+
+    var userCount: Int = 0
+    var postCount: Int = 0
+    var commentCount: Int = 0
+
+    fun fetchDataAndMapCards(fetchFromAPI: Boolean) {
+        if (fetchFromAPI) {
+            fetchDataFromApi()
+        } else {
+            fetchDataFromDatabase()
+        }
+    }
+
+    private fun fetchDataFromDatabase() {
+        viewModelScope.launch {
+            try {
+                val users = getUsersFromDatabase().map { it.toUser() }
+                val posts = getPostsFromDatabase().map { it.toPost() }
+                val comments = getCommentsFromDatabase().map { it.toComment() }
+
+                mapCard(users, posts, comments)
+            } catch (e: Exception) {
+                _fetchError.postValue(true)
+            }
+        }
+    }
+
+    private fun fetchDataFromApi() {
         viewModelScope.launch {
             try {
                 val usersDeferred = async { repository.getUsers() }
@@ -40,55 +69,86 @@ class MainViewModel @Inject constructor(
                 val comments = commentsDeferred.await()
                 val users =  usersDeferred.await()
 
-                val cards = users.map { user ->
-                    user.toUserCard().apply {
-                        this.posts = posts.filter { it.userId == user.id }
-                            .map { post ->
-                                post.toPostCard().apply {
-                                    this.comments = comments.filter {
-                                        it.postId == post.id
-                                    }.map { it.toCommentCard() }
-                                }
-                            }
-                    }
-                }
-                _cards.postValue(cards)
+                mapCard(users, posts, comments)
+                saveToDatabase(users, posts, comments)
             } catch (e: Exception) {
-                // Handle exceptions like network errors here
+                _fetchError.postValue(true)
             }
         }
     }
 
-    private suspend fun saveUsersToDatabase(users: List<User>) = withContext(Dispatchers.IO) {
-        realm.executeTransactionAsync { realm ->
-            realm.insertOrUpdate(users.map { it.toRealm() })
+    private fun saveToDatabase(users: List<User>, posts: List<Post>, comments: List<Comment>) {
+        viewModelScope.launch {
+            saveUsersToDatabase(users)
+            savePostsToDatabase(posts)
+            saveCommentsToDatabase(comments)
         }
+    }
+
+    private fun mapCard(users: List<User>, posts: List<Post>, comments: List<Comment>) {
+        userCount = users.size
+        postCount = posts.size
+        commentCount = comments.size
+        val cards = users.map { user ->
+            user.toUserCard().apply {
+                this.posts = posts.filter { it.userId == user.id }
+                    .map { post ->
+                        post.toPostCard().apply {
+                            this.comments = comments.filter {
+                                it.postId == post.id
+                            }.map { it.toCommentCard() }
+                        }
+                    }
+            }
+        }
+        _cards.postValue(cards)
+    }
+
+    private suspend fun saveUsersToDatabase(users: List<User>) = withContext(Dispatchers.IO) {
+        val realm = realmManager.getRealmInstance()
+        realm.executeTransaction { transactionRealm ->
+            transactionRealm.insertOrUpdate(users.map { it.toRealm() })
+        }
+        realmManager.closeRealmInstance()
     }
 
     private suspend fun savePostsToDatabase(posts: List<Post>) = withContext(Dispatchers.IO) {
-        realm.executeTransactionAsync { realm ->
-            realm.insertOrUpdate(posts.map { it.toRealm() })
+        val realm = realmManager.getRealmInstance()
+        realm.executeTransaction { transactionRealm ->
+            transactionRealm.insertOrUpdate(posts.map { it.toRealm() })
         }
+        realmManager.closeRealmInstance()
     }
 
     private suspend fun saveCommentsToDatabase(comments: List<Comment>) = withContext(Dispatchers.IO) {
-        realm.executeTransactionAsync { realm ->
-            realm.insertOrUpdate(comments.map { it.toRealm() })
+        val realm = realmManager.getRealmInstance()
+        realm.executeTransaction { transactionRealm ->
+            transactionRealm.insertOrUpdate(comments.map { it.toRealm() })
         }
+        realmManager.closeRealmInstance()
     }
 
     private suspend fun getUsersFromDatabase(): List<UserRealm> = withContext(Dispatchers.IO) {
+        val realm = realmManager.getRealmInstance()
         val realmResults = realm.where(UserRealm::class.java).findAll()
-        return@withContext realm.copyFromRealm(realmResults)
+        val result = realm.copyFromRealm(realmResults)
+        realmManager.closeRealmInstance()
+        return@withContext result
     }
 
     private suspend fun getPostsFromDatabase(): List<PostRealm> = withContext(Dispatchers.IO) {
+        val realm = realmManager.getRealmInstance()
         val realmResults = realm.where(PostRealm::class.java).findAll()
-        return@withContext realm.copyFromRealm(realmResults)
+        val result = realm.copyFromRealm(realmResults)
+        realmManager.closeRealmInstance()
+        return@withContext result
     }
 
     private suspend fun getCommentsFromDatabase(): List<CommentRealm> = withContext(Dispatchers.IO) {
+        val realm = realmManager.getRealmInstance()
         val realmResults = realm.where(CommentRealm::class.java).findAll()
-        return@withContext realm.copyFromRealm(realmResults)
+        val result = realm.copyFromRealm(realmResults)
+        realmManager.closeRealmInstance()
+        return@withContext result
     }
 }

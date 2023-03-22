@@ -10,8 +10,9 @@ import io.realm.Realm
 @Module
 @InstallIn(ViewModelComponent::class)
 object RealmModule {
+
     @Provides
-    fun provideRealm(): Realm {
-        return Realm.getDefaultInstance()
+    fun provideRealmManager(): RealmManager {
+        return RealmManager()
     }
 }
